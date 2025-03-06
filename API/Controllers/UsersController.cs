@@ -5,24 +5,27 @@ using System.Linq;
 using API.Data; // Certifique-se de importar o DataContext
 using API.Entities;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using API.DTOs;
 
 namespace API.Controllers // Adicione o namespace correto
 {
-  
-    public class UsersController (DataContext context): BaseApiController
+  [Authorize]
+    public class UsersController (IUserRepository userRepository): BaseApiController
     {
-        [AllowAnonymous]
+        
         [HttpGet]
-        public async Task <ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task <ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var users = await context.Users.ToListAsync(); // Use o contexto armazenado
-            return users;
+            var users = await userRepository.GetMembersAsync(); 
+            
+            return Ok(users);
         }
         [Authorize]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id) // Renomeado para evitar conflito
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDto>> GetUser(string username) 
         {
-            var user = await context.Users.FindAsync(id);
+            var user = await userRepository.GetMemberAsync(username);
 
             if (user == null) return NotFound();
 
