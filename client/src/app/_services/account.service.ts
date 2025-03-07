@@ -18,7 +18,7 @@ login(model:any){
     if(user){
       localStorage.setItem('user',JSON.stringify(user));
       this.currentUser.set(user);
-      console.log('Usuário logado:', user);
+      console.log('Usuário logado login:', user);
       }
   })
 )

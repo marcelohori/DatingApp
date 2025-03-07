@@ -25,7 +25,7 @@ export class NavComponent {
     this.accountService.login(this.model).subscribe({
       next:(response ) => {
         this.router.navigateByUrl('/members')
-        
+        console.log('usuario logado:', this.accountService.currentUser()?.username);
       },
       error: (error) => this.toastr.error(error.error)
     })
