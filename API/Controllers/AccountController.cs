@@ -43,7 +43,9 @@ namespace API.Controllers
         [HttpPost("login")]        
             public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
             {
-                var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+                var user = await context.Users
+                .Include(p => p.Photos)
+                    .FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
                 
                 if(user == null) return Unauthorized("Usuário ou senha inválido");
                 
@@ -58,7 +60,8 @@ namespace API.Controllers
                 return new UserDto
                 {
                     Username = user.UserName,
-                    Token = itokenService.CreateToken(user)
+                    Token = itokenService.CreateToken(user),
+                    PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
                 };
             }
         private async Task<bool> UserExists(string username)

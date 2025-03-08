@@ -12,7 +12,7 @@ namespace API.Entities
     public int Id { get; set; }
     public required string Url { get; set; }
     public bool IsMain { get; set; }
-    public string? IsPublicId { get; set; }
+    public string? PublicId { get; set; }
 
     //Navigation Properties
     public int AppUserId { get; set; }
