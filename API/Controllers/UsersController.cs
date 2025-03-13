@@ -10,6 +10,7 @@ using API.DTOs;
 using System.Security.Claims;
 using API.Interfaces;
 using API.Extensions;
+using API.Helpers;
 
 namespace API.Controllers // Adicione o namespace correto
 {
@@ -18,10 +19,12 @@ namespace API.Controllers // Adicione o namespace correto
     {
         
         [HttpGet]
-        public async Task <ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        public async Task <ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await userRepository.GetMembersAsync(); 
+            var users = await userRepository.GetMembersAsync(userParams); 
             
+            Response.AddPaginationHeader(users);
+        
             return Ok(users);
         }
         [Authorize]
