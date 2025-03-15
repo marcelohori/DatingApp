@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace API.Migrations
+namespace API.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -21,7 +21,7 @@ namespace API.Migrations
                     PasswordHash = table.Column<byte[]>(type: "BLOB", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "BLOB", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    KnowAs = table.Column<string>(type: "TEXT", nullable: false),
+                    KnownAs = table.Column<string>(type: "TEXT", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     LastActive = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Gender = table.Column<string>(type: "TEXT", nullable: false),
@@ -37,6 +37,30 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Likes",
+                columns: table => new
+                {
+                    SourceUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TargetUserId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Likes", x => new { x.SourceUserId, x.TargetUserId });
+                    table.ForeignKey(
+                        name: "FK_Likes_Users_SourceUserId",
+                        column: x => x.SourceUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Likes_Users_TargetUserId",
+                        column: x => x.TargetUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Photos",
                 columns: table => new
                 {
@@ -44,7 +68,7 @@ namespace API.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Url = table.Column<string>(type: "TEXT", nullable: false),
                     IsMain = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsPublicId = table.Column<string>(type: "TEXT", nullable: true),
+                    PublicId = table.Column<string>(type: "TEXT", nullable: true),
                     AppUserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -59,6 +83,11 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Likes_TargetUserId",
+                table: "Likes",
+                column: "TargetUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Photos_AppUserId",
                 table: "Photos",
                 column: "AppUserId");
@@ -67,6 +96,9 @@ namespace API.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Likes");
+
             migrationBuilder.DropTable(
                 name: "Photos");
 
